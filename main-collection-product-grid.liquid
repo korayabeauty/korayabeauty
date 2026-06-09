@@ -1,0 +1,1211 @@
+{{ 'template-collection.css' | asset_url | stylesheet_tag }}
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-pagination.css' | asset_url | stylesheet_tag }}
+
+
+<style>
+  /* ═══════════════════════════════════════════════════
+     KORAYA COLLECTION FILTERS
+     ═══════════════════════════════════════════════════ */
+
+  :root {
+    --kr-font: inherit;
+    --kr-text: #1a1a1a;
+    --kr-text-soft: #666;
+    --kr-text-muted: #999;
+    --kr-border: rgba(0,0,0,0.08);
+    --kr-hover-bg: rgba(0,0,0,0.028);
+    --kr-radius: 6px;
+    --kr-transition: 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* ── Desktop: Sidebar + Grid Layout ── */
+  @media screen and (min-width: 750px) {
+    .facets-vertical {
+      display: flex;
+      gap: 0;
+      align-items: flex-start;
+    }
+    .facets-vertical-sort {
+      margin-bottom: 0;
+    }
+    .facets-vertical > aside,
+    .facets-vertical > .facets-wrapper {
+      width: 265px;
+      min-width: 265px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 2rem;
+      padding: 0 3rem 3rem 0;
+      border-right: 1px solid var(--kr-border);
+      margin-right: 3.6rem;
+    }
+    .facets-vertical > .product-grid-container,
+    .facets-vertical > #ProductGridContainer {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  /* ── "Filter:" Label ── */
+  .facets-vertical > aside .facets__header,
+  #main-collection-filters .facets__header {
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--kr-text-muted);
+    margin: 0 0 1.8rem 0;
+    padding: 0;
+  }
+
+  /* ── Each Filter Group (Accordion) ── */
+  #main-collection-filters details,
+  #FacetFiltersForm details {
+    border: none;
+    border-bottom: 1px solid var(--kr-border);
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+  }
+  #main-collection-filters details:first-of-type,
+  #FacetFiltersForm details:first-of-type {
+    border-top: 1px solid var(--kr-border);
+  }
+
+  /* ── Accordion Header (Summary) ── */
+  #main-collection-filters summary,
+  #FacetFiltersForm summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 0;
+    margin: 0;
+    cursor: pointer;
+    list-style: none;
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: var(--kr-text);
+    border: none;
+    background: transparent;
+    transition: color var(--kr-transition);
+    line-height: 1;
+  }
+  #main-collection-filters summary:hover,
+  #FacetFiltersForm summary:hover {
+    color: var(--kr-text-soft);
+  }
+  #main-collection-filters summary::-webkit-details-marker,
+  #FacetFiltersForm summary::-webkit-details-marker,
+  #main-collection-filters summary::marker,
+  #FacetFiltersForm summary::marker {
+    display: none;
+    content: '';
+  }
+
+  /* ── Caret Arrow ── */
+  #main-collection-filters summary .svg-wrapper,
+  #main-collection-filters summary svg:last-child,
+  #FacetFiltersForm summary .svg-wrapper,
+  #FacetFiltersForm summary svg:last-child {
+    width: 1rem;
+    height: 1rem;
+    opacity: 0.3;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity var(--kr-transition);
+    flex-shrink: 0;
+  }
+  #main-collection-filters summary:hover .svg-wrapper,
+  #main-collection-filters summary:hover svg:last-child,
+  #FacetFiltersForm summary:hover .svg-wrapper,
+  #FacetFiltersForm summary:hover svg:last-child {
+    opacity: 0.6;
+  }
+  #main-collection-filters details[open] > summary .svg-wrapper,
+  #main-collection-filters details[open] > summary svg:last-child,
+  #FacetFiltersForm details[open] > summary .svg-wrapper,
+  #FacetFiltersForm details[open] > summary svg:last-child {
+    transform: rotate(180deg);
+    opacity: 0.5;
+  }
+
+  /* ── Dropdown Body ── */
+  #main-collection-filters details > div,
+  #FacetFiltersForm details > div {
+    padding: 0.2rem 0 1.4rem;
+    animation: krReveal 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* ── Options List ── */
+  #main-collection-filters ul,
+  #FacetFiltersForm ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* ── Each Option Row ── */
+  #main-collection-filters li,
+  #FacetFiltersForm li {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* ── Checkbox Labels (NOT price fields) ── */
+  #main-collection-filters label:not(.field__label),
+  #FacetFiltersForm label:not(.field__label) {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    padding: 0.65rem 0.7rem;
+    margin: 1px 0;
+    border-radius: var(--kr-radius);
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: var(--kr-text-soft);
+    cursor: pointer;
+    transition: background var(--kr-transition), color var(--kr-transition);
+    line-height: 1.45;
+    letter-spacing: 0.01em;
+    position: relative;
+    background: transparent;
+  }
+  #main-collection-filters label:not(.field__label):hover,
+  #FacetFiltersForm label:not(.field__label):hover {
+    background: var(--kr-hover-bg);
+    color: var(--kr-text);
+  }
+
+  /* ── Hide native checkbox input ── */
+  #main-collection-filters label input[type="checkbox"],
+  #FacetFiltersForm label input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+
+  /* ── Hide Dawn checkbox SVGs (direct children only) ── */
+  #main-collection-filters label:not(.field__label) > svg,
+  #main-collection-filters label:not(.field__label) > .icon,
+  #main-collection-filters label:not(.field__label) > .svg-wrapper,
+  #FacetFiltersForm label:not(.field__label) > svg,
+  #FacetFiltersForm label:not(.field__label) > .icon,
+  #FacetFiltersForm label:not(.field__label) > .svg-wrapper {
+    display: none !important;
+  }
+
+  /* ── Custom checkbox via ::before (NOT on price labels) ── */
+  #main-collection-filters label:not(.field__label)::before,
+  #FacetFiltersForm label:not(.field__label)::before {
+    content: '';
+    flex-shrink: 0;
+    width: 1.4rem;
+    height: 1.4rem;
+    border: 1.5px solid rgba(0,0,0,0.2);
+    border-radius: 3px;
+    background: transparent;
+    transition: background var(--kr-transition), border-color var(--kr-transition);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #main-collection-filters label:not(.field__label):hover::before,
+  #FacetFiltersForm label:not(.field__label):hover::before {
+    border-color: rgba(0,0,0,0.45);
+  }
+  #main-collection-filters label:not(.field__label):has(input:checked)::before,
+  #FacetFiltersForm label:not(.field__label):has(input:checked)::before {
+    background: var(--kr-text);
+    border-color: var(--kr-text);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 8' fill='none'%3E%3Cpath d='M1 4l2.5 2.5L9 1' stroke='%23fff' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 65%;
+  }
+
+  /* ══════════════════════════════════════
+     PRICE RANGE — fully isolated
+  ══════════════════════════════════════ */
+
+/* ══ Price Range — single row ══ */
+#main-collection-filters price-range,
+#FacetFiltersForm price-range {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.4rem 0 1rem;
+}
+
+/* Each From/To field takes equal width */
+#main-collection-filters price-range .field,
+#FacetFiltersForm price-range .field {
+  display: flex !important;
+  flex: 1 !important;
+  align-items: center !important;
+  border: none !important;
+  background: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  position: relative;
+}
+
+/* Dash separator between the two fields */
+
+
+#main-collection-filters price-range .field__input:focus,
+#FacetFiltersForm price-range .field__input:focus {
+  outline: none !important;
+  border-color: rgba(0,0,0,0.2) !important;
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.03) !important;
+  background: #fff !important;
+}
+#main-collection-filters price-range .field__input::-webkit-inner-spin-button,
+#main-collection-filters price-range .field__input::-webkit-outer-spin-button,
+#FacetFiltersForm price-range .field__input::-webkit-inner-spin-button,
+#FacetFiltersForm price-range .field__input::-webkit-outer-spin-button {
+  -webkit-appearance: none !important;
+}
+
+/* "From" / "To" label floated inside input as placeholder-style */
+#main-collection-filters price-range .field__label,
+#FacetFiltersForm price-range .field__label {
+  position: absolute !important;
+  left: 1rem !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  font-size: 1.15rem !important;
+  color: var(--kr-text-muted) !important;
+  pointer-events: none !important;
+  background: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  cursor: default !important;
+  transition: opacity 0.2s;
+  width: auto !important;
+}
+#main-collection-filters price-range .field__label::before,
+#FacetFiltersForm price-range .field__label::before {
+  display: none !important;
+  content: none !important;
+}
+
+/* Hide label when input has a value */
+#main-collection-filters price-range .field__input:not(:placeholder-shown) ~ .field__label,
+#FacetFiltersForm price-range .field__input:not(:placeholder-shown) ~ .field__label {
+  opacity: 0;
+}
+
+/* Hide stray SVGs */
+#main-collection-filters price-range svg,
+#main-collection-filters price-range .icon,
+#main-collection-filters price-range .svg-wrapper,
+#FacetFiltersForm price-range svg,
+#FacetFiltersForm price-range .icon,
+#FacetFiltersForm price-range .svg-wrapper {
+  display: none !important;
+}
+
+  /* ── Active Filter Tags ── */
+  #main-collection-filters .active-facets-desktop,
+  .active-facets-desktop {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0;
+    margin: 0.6rem 0 1.4rem 0;
+  }
+  #main-collection-filters .active-facets-desktop > *,
+  .active-facets-desktop > * {
+    margin: 0;
+  }
+  .active-facets-desktop a[href] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 1.1rem;
+    border: 1px solid var(--kr-border);
+    border-radius: 100px;
+    font-size: 1.15rem;
+    font-weight: 450;
+    color: var(--kr-text-soft);
+    text-decoration: none;
+    background: rgba(0,0,0,0.015);
+    transition: all var(--kr-transition);
+    line-height: 1.5;
+  }
+  .active-facets-desktop a[href]:hover {
+    background: rgba(0,0,0,0.04);
+    border-color: rgba(0,0,0,0.15);
+    color: var(--kr-text);
+  }
+  .active-facets-desktop a svg {
+    width: 0.9rem;
+    height: 0.9rem;
+    opacity: 0.45;
+  }
+  .active-facets-desktop > :last-child a {
+    border-color: transparent;
+    background: transparent;
+    color: var(--kr-text-muted);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: rgba(0,0,0,0.2);
+  }
+
+  /* ══════════════════════════════════════
+     TOP BAR: Sort + Count
+  ══════════════════════════════════════ */
+  .facets-vertical-sort {
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+  .facets-vertical-sort .facets-vertical-form {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1.2rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid var(--kr-border);
+    margin-bottom: 1.5rem;
+  }
+  .product-count-vertical {
+    display: flex;
+    align-items: center;
+  }
+  #ProductCountDesktop {
+    font-size: 1.15rem;
+    color: var(--kr-text-muted);
+    font-weight: 400;
+    order: -1;
+    margin-right: auto;
+  }
+
+  /* ── Sort Dropdown — clean, no box ── */
+  #FacetSortForm {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  /* "Sort by:" label */
+  #FacetSortForm label,
+  #FacetSortForm .facet-filters__label {
+    font-size: 1.2rem !important;
+    font-weight: 400 !important;
+    color: var(--kr-text-muted) !important;
+    white-space: nowrap !important;
+    background: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    cursor: default !important;
+    display: block !important;
+  }
+  #FacetSortForm label::before,
+  #FacetSortForm .facet-filters__label::before {
+    display: none !important;
+    content: none !important;
+  }
+  #FacetSortForm label:hover,
+  #FacetSortForm .facet-filters__label:hover {
+    background: none !important;
+    color: var(--kr-text-muted) !important;
+  }
+
+  /* Strip Dawn's .select wrapper border */
+  #FacetSortForm .select,
+  #FacetSortForm .facet-filters__field,
+  #FacetSortForm .facet-filters {
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  /* The actual <select> */
+  #SortBy {
+    font-size: 1.25rem;
+    font-family: var(--kr-font);
+    color: var(--kr-text);
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.2rem;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    min-width: 160px;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+  #SortBy:hover {
+    border-color: rgba(0,0,0,0.18);
+  }
+  #SortBy:focus {
+    border-color: rgba(0,0,0,0.25);
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.04) !important;
+  }
+
+  /* Strip Dawn's caret SVG next to the select */
+  #FacetSortForm .select .svg-wrapper,
+  #FacetSortForm .select svg {
+    display: none !important;
+  }
+
+  /* ── Loading State ── */
+  #ProductGridContainer {
+    transition: opacity 0.3s ease;
+  }
+  #ProductGridContainer .collection.loading {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  /* ── "Show More" Links ── */
+  #main-collection-filters button[type="button"],
+  #FacetFiltersForm button[type="button"] {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--kr-text-muted);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: rgba(0,0,0,0.2);
+    background: transparent;
+    border: none;
+    padding: 0.5rem 0.7rem;
+    margin-top: 0.3rem;
+    cursor: pointer;
+    transition: color var(--kr-transition);
+  }
+  #main-collection-filters button[type="button"]:hover,
+  #FacetFiltersForm button[type="button"]:hover {
+    color: var(--kr-text);
+    text-decoration-color: rgba(0,0,0,0.5);
+  }
+
+  /* ══════════ DAWN OVERRIDES ══════════ */
+  #main-collection-filters fieldset,
+  #FacetFiltersForm fieldset,
+  #main-collection-filters .facets-wrap,
+  #FacetFiltersForm .facets-wrap,
+  #main-collection-filters .facets__list,
+  #FacetFiltersForm .facets__list {
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+  #main-collection-filters legend,
+  #FacetFiltersForm legend {
+    display: none !important;
+  }
+
+  /* ── Facet counts ── */
+  .facets__count {
+    display: none !important;
+  }
+
+  /* ══════════ MOBILE ══════════ */
+  @media screen and (max-width: 749px) {
+    .mobile-facets__open {
+      border: 1px solid var(--kr-border);
+      border-radius: 8px;
+      padding: 1rem 1.6rem;
+      font-size: 1.3rem;
+      font-weight: 500;
+      color: var(--kr-text);
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      transition: all var(--kr-transition);
+    }
+    .mobile-facets__open:active {
+      transform: scale(0.98);
+    }
+    .mobile-facets__wrapper {
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    .mobile-facets__inner {
+      border-radius: 14px 14px 0 0;
+      padding: 2rem 2rem 3rem;
+      background: #fff;
+      max-height: 88vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .mobile-facets__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 1.4rem;
+      margin-bottom: 0.5rem;
+      border-bottom: 1px solid var(--kr-border);
+    }
+    .mobile-facets__heading {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--kr-text);
+      letter-spacing: 0.02em;
+    }
+    .mobile-facets__details {
+      border-bottom: 1px solid var(--kr-border);
+    }
+    .mobile-facets__details summary,
+    .mobile-facets__summary {
+      padding: 1.3rem 0;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--kr-text);
+    }
+    #main-collection-filters label:not(.field__label),
+    #FacetFiltersForm label:not(.field__label),
+    .mobile-facets__list label {
+      padding: 1rem 0.8rem;
+      font-size: 1.4rem;
+    }
+    .mobile-facets__footer {
+      padding: 1.4rem 0 0;
+      border-top: 1px solid var(--kr-border);
+      margin-top: 1rem;
+    }
+    .mobile-facets__footer button,
+    .mobile-facets__footer a {
+      width: 100%;
+      padding: 1.3rem;
+      border-radius: 8px;
+      font-size: 1.35rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+  }
+
+  /* ── Reveal Animation ── */
+  @keyframes krReveal {
+    from { opacity: 0; transform: translateY(-5px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Pagination ── */
+  #kr-client-pagination .pagination__item {
+    min-width: 3.6rem;
+    height: 3.6rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--kr-radius);
+    font-size: 1.3rem;
+    color: var(--kr-text-soft);
+    text-decoration: none;
+    transition: background var(--kr-transition), color var(--kr-transition);
+  }
+  #kr-client-pagination .pagination__item:hover {
+    background: var(--kr-hover-bg);
+    color: var(--kr-text);
+  }
+  #kr-client-pagination .pagination__item--current {
+    background: var(--kr-text);
+    color: #fff !important;
+    font-weight: 600;
+    pointer-events: none;
+  }
+
+
+
+  /* ── Fix overlapping ₹ symbol ── */
+#main-collection-filters price-range .field,
+#FacetFiltersForm price-range .field {
+  position: relative !important;
+}
+
+#main-collection-filters price-range .field > span,
+#FacetFiltersForm price-range .field > span {
+  display: none !important;
+}
+
+
+#main-collection-filters details > div > p,
+#FacetFiltersForm details > div > p,
+#main-collection-filters .facets__price p,
+#FacetFiltersForm .facets__price p,
+#main-collection-filters price-range + p,
+#FacetFiltersForm price-range + p,
+#main-collection-filters p.facets__price-label,
+#FacetFiltersForm p.facets__price-label {
+  display: none !important;
+}
+
+/* ── Hide the stray ₹ outside the input box ── */
+#main-collection-filters price-range > span,
+#FacetFiltersForm price-range > span,
+#main-collection-filters .field > span:not(.field__label):not(.svg-wrapper),
+#FacetFiltersForm .field > span:not(.field__label):not(.svg-wrapper) {
+  display: none !important;
+}
+
+/* ── Remove double border on price inputs ── */
+#main-collection-filters price-range .field,
+#FacetFiltersForm price-range .field {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: none !important;
+}
+
+/* ── Sort dropdown — no thick border on hover/focus ── */
+#FacetSortForm .select:hover.select:after,
+#FacetSortForm .select:hover::after,
+.facets-vertical-sort .select:hover::after,
+.facets-vertical-sort .select:focus-within::after {
+  box-shadow: 0 0 0 var(--inputs-border-width) rgba(var(--color-foreground), var(--inputs-border-opacity)) !important;
+}
+
+#FacetSortForm .select__select:focus,
+#FacetSortForm .select__select:focus-visible {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+@media screen and (max-width: 749px) {
+
+  /* Hide the checkbox completely */
+  .mobile-facets__sort input[type="checkbox"] {
+    display: none !important;
+  }
+
+  /* Clean up sort wrapper */
+  .mobile-facets__sort {
+    padding: 1.2rem 0 !important;
+  }
+
+  /* Sort label */
+  .mobile-facets__sort label {
+    display: block !important;
+    font-size: 1.3rem !important;
+    font-weight: 400 !important;
+    color: #1a1a1a !important;
+    margin-bottom: 0.8rem !important;
+  }
+
+  /* Remove ALL borders and shadows from select wrapper */
+  .mobile-facets__sort .select,
+  .mobile-facets__sort .select::before,
+  .mobile-facets__sort .select::after {
+    box-shadow: none !important;
+    border: none !important;
+    outline: none !important;
+  }
+
+  /* Style the actual select element cleanly */
+  .mobile-facets__sort select,
+  .mobile-facets__sort .select__select {
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 8px !important;
+    padding: 1rem 1.4rem !important;
+    font-size: 1.3rem !important;
+    font-weight: 400 !important;
+    color: #1a1a1a !important;
+    background: #fff !important;
+    box-shadow: none !important;
+    outline: none !important;
+    width: 100% !important;
+  }
+
+  .mobile-facets__sort select:hover,
+  .mobile-facets__sort select:focus {
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+}
+
+</style>
+
+
+{% if section.settings.image_shape == 'blob' %}
+  {{ 'mask-blobs.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
+
+{%- unless section.settings.quick_add == 'none' -%}
+  {{ 'quick-add.css' | asset_url | stylesheet_tag }}
+{%- endunless -%}
+
+{%- if section.settings.quick_add == 'standard' -%}
+  <script src="{{ 'quick-add.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+
+{%- if section.settings.quick_add == 'bulk' -%}
+  <script src="{{ 'quick-add-bulk.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'quantity-popover.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'price-per-item.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'quick-order-list.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="section-{{ section.id }}-padding gradient color-{{ section.settings.color_scheme }}">
+
+  {%- paginate collection.products by 500 -%}
+    {%- assign available_products = collection.products | where: 'available', true -%}
+    {%- assign unavailable_products = collection.products | where: 'available', false -%}
+
+    {%- assign skip_card_product_styles = false -%}
+    {%- assign animation_index = 0 -%}
+
+    {%- if section.settings.enable_sorting and section.settings.filter_type == 'vertical' -%}
+      <facet-filters-form class="facets facets-vertical-sort page-width small-hide">
+        <form class="facets-vertical-form" id="FacetSortForm">
+          <div class="facet-filters sorting caption">
+            <div class="facet-filters__field">
+              <h2 class="facet-filters__label caption-large text-body">
+                <label for="SortBy">{{ 'products.facets.sort_by_label' | t }}</label>
+              </h2>
+              <div class="select">
+                {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+                <select
+                  name="sort_by"
+                  class="facet-filters__sort select__select caption-large"
+                  id="SortBy"
+                  aria-describedby="a11y-refresh-page-message"
+                >
+                  {%- for option in collection.sort_options -%}
+                    <option
+                      value="{{ option.value | escape }}"
+                      {% if option.value == sort_by %}
+                        selected="selected"
+                      {% endif %}
+                    >
+                      {{ option.name | escape }}
+                    </option>
+                  {%- endfor -%}
+                </select>
+                <span class="svg-wrapper">
+                  {{- 'icon-caret.svg' | inline_asset_content -}}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="product-count-vertical light" role="status">
+            <h2 class="product-count__text text-body">
+              <span id="ProductCountDesktop">
+                {{ 'products.facets.product_count_simple' | t: count: collection.products_count }}
+              </span>
+            </h2>
+            {%- render 'loading-spinner' -%}
+          </div>
+        </form>
+      </facet-filters-form>
+    {%- endif -%}
+
+    <div class="{% if section.settings.filter_type == 'vertical' %}facets-vertical page-width{% endif %}">
+      <script src="{{ 'facets.js' | asset_url }}" defer="defer"></script>
+
+      {%- if section.settings.enable_filtering or section.settings.enable_sorting -%}
+        <aside
+          aria-labelledby="verticalTitle"
+          class="facets-wrapper{% unless section.settings.enable_filtering %} facets-wrapper--no-filters{% endunless %}{% if section.settings.filter_type != 'vertical' %} page-width{% endif %}"
+          id="main-collection-filters"
+          data-id="{{ section.id }}"
+        >
+          {%- render 'facets',
+            results: collection,
+            enable_filtering: section.settings.enable_filtering,
+            enable_sorting: section.settings.enable_sorting,
+            filter_type: section.settings.filter_type,
+            paginate: paginate
+          -%}
+        </aside>
+      {%- endif -%}
+
+      <div
+        class="product-grid-container{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+        id="ProductGridContainer"
+        {% if settings.animations_reveal_on_scroll %}
+          data-cascade
+        {% endif %}
+      >
+        {%- if collection.products.size == 0 -%}
+          <div class="collection collection--empty page-width" id="product-grid" data-id="{{ section.id }}">
+            <div class="loading-overlay gradient"></div>
+            <div class="title-wrapper center">
+              <h2 class="title title--primary">
+                {{ 'sections.collection_template.empty' | t -}}
+                <br>
+                {{
+                  'sections.collection_template.use_fewer_filters_html'
+                  | t: link: collection.url, class: 'underlined-link link'
+                }}
+              </h2>
+            </div>
+          </div>
+
+        {%- else -%}
+          <div class="collection{% if section.settings.filter_type != 'vertical' %} page-width{% endif %}">
+            <div class="loading-overlay gradient"></div>
+
+            <ul
+              id="product-grid"
+              data-id="{{ section.id }}"
+              class="grid product-grid grid--{{ section.settings.columns_mobile }}-col-tablet-down grid--{{ section.settings.columns_desktop }}-col-desktop{% if section.settings.quick_add == 'bulk' %} collection-quick-add-bulk{% endif %}"
+            >
+              {%- assign page_available = collection.products | where: 'available', true -%}
+              {%- assign page_unavailable = collection.products | where: 'available', false -%}
+              {%- assign sorted_page = page_available | concat: page_unavailable -%}
+              {%- for product in sorted_page -%}
+                {%- assign animation_index = animation_index | plus: 1 -%}
+                {%- assign lazy_load = false -%}
+                {%- if animation_index > 2 -%}
+                  {%- assign lazy_load = true -%}
+                {%- endif -%}
+                <li
+                  class="grid__item{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+                  {% if settings.animations_reveal_on_scroll %}
+                    data-cascade
+                    style="--animation-order: {{ animation_index }};"
+                  {% endif %}
+                >
+                  {%- render 'card-product-collection',
+                    card_product: product,
+                    media_aspect_ratio: section.settings.image_ratio,
+                    image_shape: section.settings.image_shape,
+                    show_secondary_image: section.settings.show_secondary_image,
+                    show_vendor: section.settings.show_vendor,
+                    show_rating: section.settings.show_rating,
+                    lazy_load: lazy_load,
+                    skip_styles: skip_card_product_styles,
+                    quick_add: section.settings.quick_add,
+                    section_id: section.id
+                  -%}
+                </li>
+                {%- assign skip_card_product_styles = true -%}
+              {%- endfor -%}
+            </ul>
+
+            <nav class="pagination" id="kr-client-pagination" style="display: none; text-align: center; margin-top: 4rem; position: relative; z-index: 20;">
+              <ul class="pagination__list list-unstyled" style="display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; padding: 0; margin: 0;"></ul>
+            </nav>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  {%- endpaginate -%}
+
+  {%- if section.settings.image_shape == 'arch' -%}
+    {{ 'mask-arch.svg' | inline_asset_content }}
+  {%- endif -%}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+  // ── HARDCODED to 12 products per page ──
+  const KR_PER_PAGE = 12;
+
+  function initPagination() {
+    const grid = document.getElementById('product-grid');
+    if (!grid) return;
+
+    const items = Array.from(grid.querySelectorAll('.grid__item'));
+    const paginationNav = document.getElementById('kr-client-pagination');
+    if (!paginationNav) return;
+    const ul = paginationNav.querySelector('ul');
+
+    // Fewer items than one page — show all, hide pagination
+    if (items.length <= KR_PER_PAGE) {
+      paginationNav.style.display = 'none';
+      items.forEach(item => item.style.display = '');
+      return;
+    }
+
+    const totalPages = Math.ceil(items.length / KR_PER_PAGE);
+    let currentPage = 1;
+
+    function renderPage(page) {
+      currentPage = page;
+
+      // Show only the slice for this page
+      items.forEach((item, index) => {
+        const inRange = index >= (page - 1) * KR_PER_PAGE && index < page * KR_PER_PAGE;
+        item.style.display = inRange ? '' : 'none';
+      });
+
+      // Rebuild pagination buttons
+      ul.innerHTML = '';
+
+      // Prev arrow
+      if (currentPage > 1) {
+        ul.appendChild(makeArrow('‹', currentPage - 1));
+      }
+
+      // Page numbers with ellipsis
+      const pages = getPageRange(currentPage, totalPages);
+      pages.forEach(p => {
+        if (p === '…') {
+          const li = document.createElement('li');
+          const span = document.createElement('span');
+          span.textContent = '…';
+          span.className = 'pagination__item';
+          span.style.cssText = 'pointer-events:none; opacity:0.35; min-width:3.6rem; height:3.6rem; display:inline-flex; align-items:center; justify-content:center; font-size:1.3rem;';
+          li.appendChild(span);
+          ul.appendChild(li);
+        } else {
+          ul.appendChild(makePageBtn(p, p === currentPage));
+        }
+      });
+
+      // Next arrow
+      if (currentPage < totalPages) {
+        ul.appendChild(makeArrow('›', currentPage + 1));
+      }
+
+      paginationNav.style.display = 'block';
+    }
+
+    // Smart page range: always show first, last, current ±1, with ellipsis
+    function getPageRange(current, total) {
+      if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+      const pages = new Set([1, total, current, current - 1, current + 1].filter(p => p >= 1 && p <= total));
+      const sorted = [...pages].sort((a, b) => a - b);
+      const result = [];
+      sorted.forEach((p, i) => {
+        if (i > 0 && p - sorted[i - 1] > 1) result.push('…');
+        result.push(p);
+      });
+      return result;
+    }
+
+    function makePageBtn(page, isCurrent) {
+      const li = document.createElement('li');
+      const btn = document.createElement('a');
+      btn.href = '#';
+      btn.textContent = page;
+      btn.className = isCurrent
+        ? 'pagination__item pagination__item--current light'
+        : 'pagination__item link';
+      btn.setAttribute('aria-label', 'Page ' + page);
+      if (isCurrent) btn.setAttribute('aria-current', 'page');
+      btn.addEventListener('click', e => {
+        e.preventDefault();
+        renderPage(page);
+        window.scrollTo({ top: (document.getElementById('product-grid').offsetTop - 150), behavior: 'smooth' });
+      });
+      li.appendChild(btn);
+      return li;
+    }
+
+    function makeArrow(symbol, targetPage) {
+      const li = document.createElement('li');
+      const btn = document.createElement('a');
+      btn.href = '#';
+      btn.textContent = symbol;
+      btn.className = 'pagination__item link';
+      btn.style.fontSize = '1.8rem';
+      btn.setAttribute('aria-label', symbol === '‹' ? 'Previous page' : 'Next page');
+      btn.addEventListener('click', e => {
+        e.preventDefault();
+        renderPage(targetPage);
+        window.scrollTo({ top: (document.getElementById('product-grid').offsetTop - 150), behavior: 'smooth' });
+      });
+      li.appendChild(btn);
+      return li;
+    }
+
+    renderPage(1);
+  }
+
+  // Run on first load
+  initPagination();
+
+  // Re-run after Shopify AJAX filter updates
+  const container = document.getElementById('ProductGridContainer');
+  if (container) {
+    const observer = new MutationObserver((mutations) => {
+      const isInternal = mutations.every(m =>
+        m.target && m.target.closest && m.target.closest('#kr-client-pagination')
+      );
+      if (isInternal) return;
+      setTimeout(initPagination, 50);
+    });
+    observer.observe(container, { childList: true, subtree: true });
+  }
+});
+</script>
+
+{% schema %}
+{
+  "name": "t:sections.main-collection-product-grid.name",
+  "class": "section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 36,
+      "step": 4,
+      "default": 12,
+      "label": "t:sections.main-collection-product-grid.settings.products_per_page.label"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 4,
+      "label": "t:sections.main-collection-product-grid.settings.columns_desktop.label"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "default": "2",
+      "label": "t:sections.main-collection-product-grid.settings.columns_mobile.label",
+      "options": [
+        { "value": "1", "label": "t:sections.main-collection-product-grid.settings.columns_mobile.options__1.label" },
+        { "value": "2", "label": "t:sections.main-collection-product-grid.settings.columns_mobile.options__2.label" }
+      ]
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "info": "t:sections.all.colors.has_cards_info",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.main-collection-product-grid.settings.header__3.content"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "options": [
+        { "value": "adapt", "label": "t:sections.main-collection-product-grid.settings.image_ratio.options__1.label" },
+        { "value": "portrait", "label": "t:sections.main-collection-product-grid.settings.image_ratio.options__2.label" },
+        { "value": "square", "label": "t:sections.main-collection-product-grid.settings.image_ratio.options__3.label" }
+      ],
+      "default": "adapt",
+      "label": "t:sections.main-collection-product-grid.settings.image_ratio.label"
+    },
+    {
+      "type": "select",
+      "id": "image_shape",
+      "options": [
+        { "value": "default", "label": "t:sections.all.image_shape.options__1.label" },
+        { "value": "arch", "label": "t:sections.all.image_shape.options__2.label" },
+        { "value": "blob", "label": "t:sections.all.image_shape.options__3.label" },
+        { "value": "chevronleft", "label": "t:sections.all.image_shape.options__4.label" },
+        { "value": "chevronright", "label": "t:sections.all.image_shape.options__5.label" },
+        { "value": "diamond", "label": "t:sections.all.image_shape.options__6.label" },
+        { "value": "parallelogram", "label": "t:sections.all.image_shape.options__7.label" },
+        { "value": "round", "label": "t:sections.all.image_shape.options__8.label" }
+      ],
+      "default": "default",
+      "label": "t:sections.all.image_shape.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_secondary_image",
+      "default": false,
+      "label": "t:sections.main-collection-product-grid.settings.show_secondary_image.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "default": false,
+      "label": "t:sections.main-collection-product-grid.settings.show_vendor.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "default": false,
+      "label": "t:sections.main-collection-product-grid.settings.show_rating.label",
+      "info": "t:sections.main-collection-product-grid.settings.show_rating.info"
+    },
+    {
+      "type": "select",
+      "id": "quick_add",
+      "default": "none",
+      "label": "t:sections.main-collection-product-grid.settings.quick_add.label",
+      "options": [
+        { "value": "none", "label": "t:sections.main-collection-product-grid.settings.quick_add.options.option_1" },
+        { "value": "standard", "label": "t:sections.main-collection-product-grid.settings.quick_add.options.option_2" },
+        { "value": "bulk", "label": "t:sections.main-collection-product-grid.settings.quick_add.options.option_3" }
+      ]
+    },
+    { "type": "header", "content": "t:sections.main-collection-product-grid.settings.header__1.content" },
+    {
+      "type": "checkbox",
+      "id": "enable_filtering",
+      "default": true,
+      "label": "t:sections.main-collection-product-grid.settings.enable_filtering.label",
+      "info": "t:sections.main-collection-product-grid.settings.enable_filtering.info"
+    },
+    {
+      "type": "select",
+      "id": "filter_type",
+      "options": [
+        { "value": "horizontal", "label": "t:sections.main-collection-product-grid.settings.filter_type.options__1.label" },
+        { "value": "vertical", "label": "t:sections.main-collection-product-grid.settings.filter_type.options__2.label" },
+        { "value": "drawer", "label": "t:sections.main-collection-product-grid.settings.filter_type.options__3.label" }
+      ],
+      "default": "horizontal",
+      "label": "t:sections.main-collection-product-grid.settings.filter_type.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sorting",
+      "default": true,
+      "label": "t:sections.main-collection-product-grid.settings.enable_sorting.label"
+    },
+    { "type": "header", "content": "t:sections.all.padding.section_padding_heading" },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}

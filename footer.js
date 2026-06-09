@@ -1,4 +1,3 @@
-<script>
 
      // Get all FAQ questions
         const faqQuestions = document.querySelectorAll('.faq-question');
@@ -489,4 +488,4 @@ if (sliderContainer) {
             }
         });
         updateSlides(1);
-        </script>
+       
